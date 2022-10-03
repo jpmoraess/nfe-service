@@ -1,17 +1,12 @@
 package br.com.moraesit.nfeservice.data.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +19,13 @@ public class Empresa {
 
     private String nome;
 
+    private String nsu;
+
     private boolean favorita;
 
     private boolean ativa;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "certificado_id", referencedColumnName = "id")
+    private Certificado certificado;
 }

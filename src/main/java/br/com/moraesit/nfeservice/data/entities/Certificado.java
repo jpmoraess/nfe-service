@@ -2,10 +2,7 @@ package br.com.moraesit.nfeservice.data.entities;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -17,14 +14,17 @@ import java.time.LocalDate;
 public class Certificado {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    @OneToOne(mappedBy = "certificado")
+    private Empresa empresa;
 
-    private String password;
+    private String nome;
 
-    private LocalDate expirationDate;
+    private String senha;
+
+    private LocalDate validade;
 
     private String contentType;
 

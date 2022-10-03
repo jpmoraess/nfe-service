@@ -1,8 +1,8 @@
 package br.com.moraesit.nfeservice.api.controllers;
 
 import br.com.moraesit.nfeservice.api.mapper.EmpresaMapper;
-import br.com.moraesit.nfeservice.api.models.empresa.CadastrarEmpresaRequest;
-import br.com.moraesit.nfeservice.api.models.empresa.CadastrarEmpresaResponse;
+import br.com.moraesit.nfeservice.api.models.empresa.CadastroEmpresaRequest;
+import br.com.moraesit.nfeservice.api.models.empresa.CadastroEmpresaResponse;
 import br.com.moraesit.nfeservice.api.models.empresa.EmpresaModel;
 import br.com.moraesit.nfeservice.service.EmpresaService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/empresas")
 @CrossOrigin(origins = "*")
 public class EmpresaController {
-
     private final EmpresaMapper empresaMapper;
     private final EmpresaService empresaService;
 
@@ -28,27 +28,27 @@ public class EmpresaController {
     }
 
     @GetMapping
-    public List<EmpresaModel> findAll() {
-        return empresaService.findAll()
+    public List<EmpresaModel> listarTodas() {
+        return empresaService.listarTodas()
                 .stream()
-                .map(empresaMapper::empresaToEmpresaModel)
+                .map(empresaMapper::entityToModel)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public EmpresaModel findById(@PathVariable Long id) {
-        return empresaMapper.empresaToEmpresaModel(empresaService.findById(id));
+    public EmpresaModel buscarPorId(@PathVariable Long id) {
+        return empresaMapper.entityToModel(empresaService.buscarPorId(id));
     }
 
     @GetMapping("/cnpj/{cnpj}")
-    public EmpresaModel findByCnpj(@PathVariable String cnpj) {
-        return empresaMapper.empresaToEmpresaModel(empresaService.findByCnpj(cnpj));
+    public EmpresaModel buscarPorCnpj(@PathVariable String cnpj) {
+        return empresaMapper.entityToModel(empresaService.buscarPorCnpj(cnpj));
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CadastrarEmpresaResponse> cadastrar(@Valid @RequestBody CadastrarEmpresaRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CadastroEmpresaResponse> cadastrar(@Valid final CadastroEmpresaRequest req) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(empresaMapper.empresaToCadastrarEmpresaResponse(empresaService
-                        .cadastrar(empresaMapper.cadastrarEmpresaRequestToEmpresa(request))));
+                .body(empresaMapper.entityToResponse(empresaService
+                        .cadastrar(empresaMapper.requestToEntity(req), req.getCertificado().getInputStream())));
     }
 }

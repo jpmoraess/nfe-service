@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CadastrarEmpresaResponse {
+public class CadastroEmpresaResponse {
     private Long id;
     private String nome;
     private String cnpj;
