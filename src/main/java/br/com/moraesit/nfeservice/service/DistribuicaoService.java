@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,8 +105,8 @@ public class DistribuicaoService {
      * @throws IOException
      * @throws JAXBException
      */
-    private static void popularLista(Empresa empresa, List<String> listaNotasManifestar,
-                                     List<NotaEntrada> listaNotasSalvar, RetDistDFeInt retorno)
+    private void popularLista(Empresa empresa, List<String> listaNotasManifestar,
+                              List<NotaEntrada> listaNotasSalvar, RetDistDFeInt retorno)
             throws IOException, JAXBException {
         for (RetDistDFeInt.LoteDistDFeInt.DocZip doc : retorno.getLoteDistDFeInt().getDocZip()) {
             final var xml = XmlNfeUtil.gZipToXml(doc.getValue());
@@ -121,10 +122,15 @@ public class DistribuicaoService {
                     break;
                 case "procNFe_v4.00.xsd":
                     TNfeProc nfe = XmlNfeUtil.xmlToObject(xml, TNfeProc.class);
+
+                    System.out.println("EMISSÂO: " + nfe.getNFe().getInfNFe().getIde().getDhEmi());
+
                     listaNotasSalvar.add(NotaEntrada.builder()
                             .chave(nfe.getNFe().getInfNFe().getId().substring(3).trim())
                             .numero(nfe.getNFe().getInfNFe().getIde().getNNF())
                             .serie(nfe.getNFe().getInfNFe().getIde().getSerie())
+                            // formato vindo na nfe: 2022-09-06T10:05:44-03:00
+                            //.emissao(formatarDataHora(nfe.getNFe().getInfNFe().getIde().getDhEmi()))
                             .empresa(empresa)
                             .cnpjEmitente(nfe.getNFe().getInfNFe().getEmit().getCNPJ())
                             .nomeEmitente(nfe.getNFe().getInfNFe().getEmit().getXNome())
@@ -172,5 +178,10 @@ public class DistribuicaoService {
         } catch (CertificadoException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private LocalDateTime formatarDataHora(String str) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+        return LocalDateTime.parse(str, dateTimeFormatter);
     }
 }

@@ -17,6 +17,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/nota-entrada")
+@CrossOrigin(origins = "*")
 public class NotaEntradaController {
     private final NotaMapper notaMapper;
     private final NotaEntradaService notaEntradaService;

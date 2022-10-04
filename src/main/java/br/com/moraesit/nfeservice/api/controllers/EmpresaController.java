@@ -26,7 +26,6 @@ public class EmpresaController {
         this.empresaMapper = empresaMapper;
         this.empresaService = empresaService;
     }
-
     @GetMapping
     public List<EmpresaModel> listarTodas() {
         return empresaService.listarTodas()

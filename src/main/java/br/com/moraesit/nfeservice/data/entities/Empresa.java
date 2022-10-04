@@ -25,7 +25,7 @@ public class Empresa {
 
     private boolean ativa;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "certificado_id", referencedColumnName = "id")
     private Certificado certificado;
 }
