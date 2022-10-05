@@ -8,11 +8,17 @@ import br.com.moraesit.nfeservice.service.DistribuicaoNFeService;
 import br.com.moraesit.nfeservice.service.NotaEntradaService;
 import br.com.swconsultoria.certificado.exception.CertificadoException;
 import br.com.swconsultoria.nfe.exception.NfeException;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 @RestController
@@ -45,5 +51,12 @@ public class NotaEntradaController {
     @GetMapping("/consultar")
     public void consultar() throws JAXBException, NfeException, CertificadoException, IOException {
         distribuicaoNFeService.consultar();
+    }
+    @GetMapping("/{id}/danfe")
+    public ResponseEntity<byte[]> danfe(@PathVariable Long id) throws JRException, IOException, ParserConfigurationException, SAXException {
+        final var danfe = notaEntradaService.bytesDanfe(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                .body(danfe);
     }
 }

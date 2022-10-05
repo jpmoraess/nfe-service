@@ -93,17 +93,20 @@ public class DistribuicaoCTeService {
             switch (doc.getSchema()) {
                 case "procCTe_v3.00.xsd":
                     TCTe cte = XmlCteUtil.xmlToObject(xml, TCTe.class);
+
+                    System.out.println("[TCTe]: " + cte.toString());
+
                     final var conhecimentoTransporte = ConhecimentoTransporte.builder()
-                            .chave(cte.getInfCte().getId().substring(3).trim())
-                            .numero(cte.getInfCte().getIde().getNCT())
-                            .serie(cte.getInfCte().getIde().getSerie())
-                            .empresa(empresa)
-                            .cnpjEmitente(cte.getInfCte().getEmit().getCNPJ())
-                            .nomeEmitente(cte.getInfCte().getEmit().getXNome())
-                            .valor(new BigDecimal(cte.getInfCte().getVPrest().getVTPrest()))
-                            .xml(ArquivoUtil.compactaXml(xml))
+                            //.chave(cte.getInfCte().getId().substring(3).trim())
+                            //.numero(cte.getInfCte().getIde().getNCT())
+                            //.serie(cte.getInfCte().getIde().getSerie())
+                            //.empresa(empresa)
+                            //.cnpjEmitente(cte.getInfCte().getEmit().getCNPJ())
+                            //.nomeEmitente(cte.getInfCte().getEmit().getXNome())
+                            //.valor(new BigDecimal(cte.getInfCte().getVPrest().getVTPrest()))
+                            //.xml(ArquivoUtil.compactaXml(xml))
                             .build();
-                    listaConhecimentosSalvar.add(conhecimentoTransporte);
+                    //listaConhecimentosSalvar.add(conhecimentoTransporte);
                     break;
                 case "procEventoCTe_v3.00.xsd":
                     //TODO: implementar

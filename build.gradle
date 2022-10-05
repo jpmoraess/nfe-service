@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.3'
-	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.7.3'
+    id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+    id 'java'
 }
 
 group = 'br.com.moraesit'
@@ -9,38 +9,48 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
-
-	maven {
-		url = 'https://oss.sonartype.org/content/repositories/snapshots'
-	}
+    mavenCentral()
+    maven { url = 'https://oss.sonartype.org/content/repositories/snapshots' }
+    maven { url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/" }
+    maven { url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/com/lowagie/itext/2.1.7.js8/" }
 }
 
 dependencies {
-	implementation 'br.com.swconsultoria:java-nfe:4.00.18'
-	implementation 'br.com.swconsultoria:java-cte:3.00.8'
-	implementation 'br.com.swconsultoria:java_certificado:2.8'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    implementation 'br.com.swconsultoria:java-nfe:4.00.18'
+    implementation 'br.com.swconsultoria:java-cte:3.00.8'
+    implementation 'br.com.swconsultoria:java_certificado:2.8'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
-	compileOnly 'org.projectlombok:lombok'
+    // jasper
+	implementation 'net.sf.jasperreports:jasperreports:6.20.0'
+	implementation 'net.sf.jasperreports:jasperreports-fonts:6.20.0'
+	implementation 'net.sf.jasperreports:jasperreports-functions:6.20.0'
 
-	runtimeOnly 'org.postgresql:postgresql'
+    // barcode & qrcode
+    implementation 'xalan:xalan:2.7.2'
+    implementation 'net.sourceforge.barbecue:barbecue:1.5-beta1'
+    implementation 'com.google.zxing:core:3.5.0'
+    implementation 'com.google.zxing:javase:3.5.0'
 
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
