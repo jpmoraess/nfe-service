@@ -1,4 +1,6 @@
-package br.com.moraesit.nfeservice.service.impressao;
+package br.com.moraesit.nfeservice.utils;
+
+import br.com.moraesit.nfeservice.service.impressao.Impressao;
 
 import java.util.Objects;
 

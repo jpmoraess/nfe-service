@@ -4,7 +4,7 @@ import br.com.moraesit.nfeservice.data.entities.NotaEntrada;
 import br.com.moraesit.nfeservice.data.repositories.NotaEntradaRepository;
 import br.com.moraesit.nfeservice.data.specs.NotaEntradaSpecs;
 import br.com.moraesit.nfeservice.service.impressao.ImpressaoService;
-import br.com.moraesit.nfeservice.service.impressao.ImpressaoUtil;
+import br.com.moraesit.nfeservice.utils.ImpressaoUtil;
 import br.com.moraesit.nfeservice.utils.ArquivoUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
