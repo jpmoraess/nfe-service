@@ -31,6 +31,11 @@ public class NotaEntradaSpecs {
                         builder.lower(root.get("numero")), "%" + filtro.getNumero().toLowerCase() + "%"));
             }
 
+            if (Objects.nonNull(filtro.getChave())) {
+                predicates.add(builder.like(
+                        builder.lower(root.get("chave")), "%" + filtro.getChave().toLowerCase() + "%"));
+            }
+
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }

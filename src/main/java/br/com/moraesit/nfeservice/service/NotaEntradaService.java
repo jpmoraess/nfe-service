@@ -28,9 +28,11 @@ public class NotaEntradaService {
     }
 
     public Page<NotaEntrada> pesquisar(final Long empresaId, final NotaEntrada notaEntrada, final Pageable pageable) {
-        Specification<NotaEntrada> specification1 = NotaEntradaSpecs.filtrar(empresaId, notaEntrada);
+        System.out.println("filtro: " + notaEntrada.toString());
 
-        return notaEntradaRepository.findAll(specification1, pageable);
+        Specification<NotaEntrada> specification = NotaEntradaSpecs.filtrar(empresaId, notaEntrada);
+
+        return notaEntradaRepository.findAll(specification, pageable);
     }
 
     @Transactional
