@@ -19,7 +19,11 @@ public class Empresa {
 
     private String nome;
 
-    private String nsu;
+    @Column(name = "nsu_nfe")
+    private String nsuNfe;
+
+    @Column(name = "nsu_cte")
+    private String nsuCte;
 
     private boolean favorita;
 

@@ -6,7 +6,6 @@ import br.com.moraesit.nfeservice.data.specs.NotaEntradaSpecs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +27,7 @@ public class NotaEntradaService {
     }
 
     public Page<NotaEntrada> pesquisar(final Long empresaId, final NotaEntrada notaEntrada, final Pageable pageable) {
-        System.out.println("filtro: " + notaEntrada.toString());
-
-        Specification<NotaEntrada> specification = NotaEntradaSpecs.filtrar(empresaId, notaEntrada);
+        var specification = NotaEntradaSpecs.filtrar(empresaId, notaEntrada);
 
         return notaEntradaRepository.findAll(specification, pageable);
     }

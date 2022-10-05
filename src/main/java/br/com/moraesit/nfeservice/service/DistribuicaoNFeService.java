@@ -3,10 +3,7 @@ package br.com.moraesit.nfeservice.service;
 import br.com.moraesit.nfeservice.data.entities.Empresa;
 import br.com.moraesit.nfeservice.data.entities.NotaEntrada;
 import br.com.moraesit.nfeservice.exception.BusinessException;
-import br.com.moraesit.nfeservice.service.storage.LocalStorageService;
 import br.com.moraesit.nfeservice.utils.ArquivoUtil;
-import br.com.swconsultoria.certificado.Certificado;
-import br.com.swconsultoria.certificado.CertificadoService;
 import br.com.swconsultoria.certificado.exception.CertificadoException;
 import br.com.swconsultoria.nfe.Nfe;
 import br.com.swconsultoria.nfe.dom.ConfiguracoesNfe;
@@ -34,18 +31,19 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class DistribuicaoService {
+public class DistribuicaoNFeService {
 
-    private final static String SCHEMAS = "/schemas";
+    private final static String SCHEMAS = "/schemas/nfe";
     private final EmpresaService empresaService;
+    private final CertificadoService certificadoService;
     private final NotaEntradaService notaEntradaService;
-    private final LocalStorageService storageService;
 
-    public DistribuicaoService(EmpresaService empresaService, NotaEntradaService notaEntradaService,
-                               LocalStorageService storageService) {
+    public DistribuicaoNFeService(EmpresaService empresaService,
+                                  CertificadoService certificadoService,
+                                  NotaEntradaService notaEntradaService) {
         this.empresaService = empresaService;
+        this.certificadoService = certificadoService;
         this.notaEntradaService = notaEntradaService;
-        this.storageService = storageService;
     }
 
     public void consultar() throws JAXBException, NfeException, CertificadoException, IOException {
@@ -54,7 +52,7 @@ public class DistribuicaoService {
         }
     }
 
-    public void consultar(Empresa empresa) throws NfeException, CertificadoException, IOException, JAXBException {
+    private void consultar(Empresa empresa) throws NfeException, CertificadoException, IOException, JAXBException {
         ConfiguracoesNfe configuracao = criarConfiguracao(empresa);
 
         List<String> listaNotasManifestar = new ArrayList<>();
@@ -70,7 +68,7 @@ public class DistribuicaoService {
                     PessoaEnum.JURIDICA,
                     empresa.getCnpj(),
                     ConsultaDFeEnum.NSU,
-                    ObjetoUtil.verifica(empresa.getNsu()).orElse("000000000000000"));
+                    ObjetoUtil.verifica(empresa.getNsuNfe()).orElse("000000000000000"));
 
             if (!retorno.getCStat().equals(StatusEnum.DOC_LOCALIZADO_PARA_DESTINATARIO.getCodigo())) {
                 if (retorno.getCStat().equals(StatusEnum.CONSUMO_INDEVIDO.getCodigo())) {
@@ -85,7 +83,7 @@ public class DistribuicaoService {
 
             continuarConsultando = !retorno.getUltNSU().equals(retorno.getMaxNSU());
 
-            empresa.setNsu(retorno.getUltNSU());
+            empresa.setNsuNfe(retorno.getUltNSU());
         }
 
         empresaService.atualizar(empresa);
@@ -122,10 +120,7 @@ public class DistribuicaoService {
                     break;
                 case "procNFe_v4.00.xsd":
                     TNfeProc nfe = XmlNfeUtil.xmlToObject(xml, TNfeProc.class);
-
-                    System.out.println("EMISSÂO: " + nfe.getNFe().getInfNFe().getIde().getDhEmi());
-
-                    listaNotasSalvar.add(NotaEntrada.builder()
+                    final var notaEntrada = NotaEntrada.builder()
                             .chave(nfe.getNFe().getInfNFe().getId().substring(3).trim())
                             .numero(nfe.getNFe().getInfNFe().getIde().getNNF())
                             .serie(nfe.getNFe().getInfNFe().getIde().getSerie())
@@ -137,7 +132,8 @@ public class DistribuicaoService {
                             .schema(doc.getSchema())
                             .valor(new BigDecimal(nfe.getNFe().getInfNFe().getTotal().getICMSTot().getVNF()))
                             .xml(ArquivoUtil.compactaXml(xml))
-                            .build());
+                            .build();
+                    listaNotasSalvar.add(notaEntrada);
                     break;
                 default:
                     break;
@@ -167,18 +163,10 @@ public class DistribuicaoService {
     }
 
     private ConfiguracoesNfe criarConfiguracao(Empresa empresa) throws CertificadoException {
-        final var certificado = a1(empresa);
+        final var certificado = certificadoService.a1(empresa);
         return ConfiguracoesNfe.criarConfiguracoes(EstadosEnum.SP, AmbienteEnum.PRODUCAO, certificado, SCHEMAS);
     }
 
-    private Certificado a1(Empresa empresa) {
-        try (var inputStream = storageService.retrieve(empresa.getCertificado().getNome())) {
-            return CertificadoService
-                    .certificadoPfxBytes(inputStream.readAllBytes(), empresa.getCertificado().getSenha());
-        } catch (CertificadoException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private LocalDateTime formatarDataHora(String str) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;

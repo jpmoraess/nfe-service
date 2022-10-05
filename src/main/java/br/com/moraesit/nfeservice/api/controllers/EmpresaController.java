@@ -26,6 +26,7 @@ public class EmpresaController {
         this.empresaMapper = empresaMapper;
         this.empresaService = empresaService;
     }
+
     @GetMapping
     public List<EmpresaModel> listarTodas() {
         return empresaService.listarTodas()
@@ -44,7 +45,7 @@ public class EmpresaController {
         return empresaMapper.entityToModel(empresaService.buscarPorCnpj(cnpj));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CadastroEmpresaResponse> cadastrar(@Valid final CadastroEmpresaRequest req) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(empresaMapper.entityToResponse(empresaService

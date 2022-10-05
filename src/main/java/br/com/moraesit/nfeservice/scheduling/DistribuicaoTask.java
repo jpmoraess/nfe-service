@@ -1,6 +1,6 @@
 package br.com.moraesit.nfeservice.scheduling;
 
-import br.com.moraesit.nfeservice.service.DistribuicaoService;
+import br.com.moraesit.nfeservice.service.DistribuicaoNFeService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 public class DistribuicaoTask {
     private final long ONE_HOUR_DELAY = 3600000;
     private final long FIVE_MINUTES_DELAY = 300000;
-    private final DistribuicaoService distribuicaoService;
+    private final DistribuicaoNFeService distribuicaoNFeService;
 
-    public DistribuicaoTask(DistribuicaoService distribuicaoService) {
-        this.distribuicaoService = distribuicaoService;
+    public DistribuicaoTask(DistribuicaoNFeService distribuicaoNFeService) {
+        this.distribuicaoNFeService = distribuicaoNFeService;
     }
 
     @Scheduled(initialDelay = FIVE_MINUTES_DELAY, fixedDelay = ONE_HOUR_DELAY)

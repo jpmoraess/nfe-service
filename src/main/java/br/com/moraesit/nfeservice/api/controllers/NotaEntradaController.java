@@ -4,7 +4,7 @@ package br.com.moraesit.nfeservice.api.controllers;
 import br.com.moraesit.nfeservice.api.mapper.NotaMapper;
 import br.com.moraesit.nfeservice.api.models.notaEntrada.FiltroNota;
 import br.com.moraesit.nfeservice.api.models.notaEntrada.NotaEntradaModel;
-import br.com.moraesit.nfeservice.service.DistribuicaoService;
+import br.com.moraesit.nfeservice.service.DistribuicaoNFeService;
 import br.com.moraesit.nfeservice.service.NotaEntradaService;
 import br.com.swconsultoria.certificado.exception.CertificadoException;
 import br.com.swconsultoria.nfe.exception.NfeException;
@@ -21,12 +21,14 @@ import java.io.IOException;
 public class NotaEntradaController {
     private final NotaMapper notaMapper;
     private final NotaEntradaService notaEntradaService;
-    private final DistribuicaoService distribuicaoService;
+    private final DistribuicaoNFeService distribuicaoNFeService;
 
-    public NotaEntradaController(NotaMapper notaMapper, NotaEntradaService notaEntradaService, DistribuicaoService distribuicaoService) {
+    public NotaEntradaController(NotaMapper notaMapper,
+                                 NotaEntradaService notaEntradaService,
+                                 DistribuicaoNFeService distribuicaoNFeService) {
         this.notaMapper = notaMapper;
         this.notaEntradaService = notaEntradaService;
-        this.distribuicaoService = distribuicaoService;
+        this.distribuicaoNFeService = distribuicaoNFeService;
     }
 
     @GetMapping
@@ -42,6 +44,6 @@ public class NotaEntradaController {
 
     @GetMapping("/consultar")
     public void consultar() throws JAXBException, NfeException, CertificadoException, IOException {
-        distribuicaoService.consultar();
+        distribuicaoNFeService.consultar();
     }
 }
