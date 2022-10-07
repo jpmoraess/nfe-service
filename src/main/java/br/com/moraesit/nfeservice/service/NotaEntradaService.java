@@ -52,4 +52,10 @@ public class NotaEntradaService {
         final var impressao = ImpressaoUtil.impressaoPadraoNFe(ArquivoUtil.descompactaXml(nota.getXml()));
         return impressaoService.impressaoPdfByte(impressao);
     }
+
+    public void htmlDanfe(Long id) throws IOException, JRException, ParserConfigurationException, SAXException {
+        final var nota = buscar(id);
+        final var impressao = ImpressaoUtil.impressaoPadraoNFe(ArquivoUtil.descompactaXml(nota.getXml()));
+        impressaoService.impressaoHtml(impressao, "C:\\Users\\joaop\\OneDrive\\Área de Trabalho\\notas");
+    }
 }

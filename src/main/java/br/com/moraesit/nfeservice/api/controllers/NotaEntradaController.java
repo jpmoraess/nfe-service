@@ -59,4 +59,10 @@ public class NotaEntradaController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                 .body(danfe);
     }
+
+    @GetMapping("/{id}/danfe-html")
+    public ResponseEntity<?> danfeHtml(@PathVariable Long id) throws JRException, IOException, ParserConfigurationException, SAXException {
+        notaEntradaService.htmlDanfe(id);
+        return ResponseEntity.ok().build();
+    }
 }
