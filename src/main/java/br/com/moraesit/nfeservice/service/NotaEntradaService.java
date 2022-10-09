@@ -1,11 +1,12 @@
 package br.com.moraesit.nfeservice.service;
 
+import br.com.moraesit.nfeservice.api.models.notaEntrada.FiltroNota;
 import br.com.moraesit.nfeservice.data.entities.NotaEntrada;
 import br.com.moraesit.nfeservice.data.repositories.NotaEntradaRepository;
-import br.com.moraesit.nfeservice.data.specs.NotaEntradaSpecs;
+import br.com.moraesit.nfeservice.data.repositories.projection.ResumoNotaEntrada;
 import br.com.moraesit.nfeservice.service.impressao.ImpressaoService;
-import br.com.moraesit.nfeservice.utils.ImpressaoUtil;
 import br.com.moraesit.nfeservice.utils.ArquivoUtil;
+import br.com.moraesit.nfeservice.utils.ImpressaoUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
@@ -36,10 +37,8 @@ public class NotaEntradaService {
                 .orElseThrow(() -> new EntityNotFoundException("Nota não encontrada."));
     }
 
-    public Page<NotaEntrada> pesquisar(final Long empresaId, final NotaEntrada notaEntrada, final Pageable pageable) {
-        var specification = NotaEntradaSpecs.filtrar(empresaId, notaEntrada);
-
-        return notaEntradaRepository.findAll(specification, pageable);
+    public Page<ResumoNotaEntrada> resumir(final FiltroNota filtroNota, final Pageable pageable) {
+        return notaEntradaRepository.resumir(filtroNota, pageable);
     }
 
     @Transactional

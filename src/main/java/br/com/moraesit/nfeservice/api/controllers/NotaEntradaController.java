@@ -4,6 +4,7 @@ package br.com.moraesit.nfeservice.api.controllers;
 import br.com.moraesit.nfeservice.api.mapper.NotaMapper;
 import br.com.moraesit.nfeservice.api.models.notaEntrada.FiltroNota;
 import br.com.moraesit.nfeservice.api.models.notaEntrada.NotaEntradaModel;
+import br.com.moraesit.nfeservice.data.repositories.projection.ResumoNotaEntrada;
 import br.com.moraesit.nfeservice.service.DistribuicaoNFeService;
 import br.com.moraesit.nfeservice.service.NotaEntradaService;
 import br.com.swconsultoria.certificado.exception.CertificadoException;
@@ -38,9 +39,9 @@ public class NotaEntradaController {
     }
 
     @GetMapping
-    public Page<NotaEntradaModel> pesquisar(@RequestParam("empresaId") final Long empresaId, FiltroNota filtroNota, Pageable pageable) {
-        final var notaEntrada = notaMapper.filtroToEntity(filtroNota);
-        return notaEntradaService.pesquisar(empresaId, notaEntrada, pageable).map(notaMapper::entityToModel);
+    public Page<ResumoNotaEntrada> resumir(@RequestParam("empresaId") final Long empresaId, FiltroNota filtroNota, Pageable pageable) {
+        filtroNota.setEmpresaId(empresaId);
+        return notaEntradaService.resumir(filtroNota, pageable);
     }
 
     @GetMapping("/{id}")
@@ -52,6 +53,7 @@ public class NotaEntradaController {
     public void consultar() throws JAXBException, NfeException, CertificadoException, IOException {
         distribuicaoNFeService.consultar();
     }
+
     @GetMapping("/{id}/danfe")
     public ResponseEntity<byte[]> danfe(@PathVariable Long id) throws JRException, IOException, ParserConfigurationException, SAXException {
         final var danfe = notaEntradaService.bytesDanfe(id);

@@ -1,16 +1,17 @@
-package br.com.moraesit.nfeservice.api.models.notaEntrada;
+package br.com.moraesit.nfeservice.data.repositories.projection;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Builder
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FiltroNota {
-    private Long empresaId;
+public class ResumoNotaEntrada {
     private Long id;
     private String chave;
     private String numero;
