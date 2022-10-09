@@ -2,8 +2,6 @@ package br.com.moraesit.nfeservice.service;
 
 import br.com.moraesit.nfeservice.data.entities.ConhecimentoTransporte;
 import br.com.moraesit.nfeservice.data.entities.Empresa;
-import br.com.moraesit.nfeservice.exception.BusinessException;
-import br.com.moraesit.nfeservice.utils.ArquivoUtil;
 import br.com.swconsultoria.certificado.exception.CertificadoException;
 import br.com.swconsultoria.cte.Cte;
 import br.com.swconsultoria.cte.dom.ConfiguracoesCte;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,10 +60,15 @@ public class DistribuicaoCTeService {
                     ObjetoUtil.verifica(empresa.getNsuCte()).orElse("000000000000000"));
 
             if (!retorno.getCStat().equals(StatusCteEnum.DOC_LOCALIZADO_PARA_DESTINATARIO.getCodigo())) {
+                // parar o processamento caso o erro for de consumo indevido
                 if (retorno.getCStat().equals(StatusCteEnum.CONSUMO_INDEVIDO.getCodigo())) {
                     break;
                 } else {
-                    throw new BusinessException("Erro ao realizar a consulta de cte: " + retorno.getCStat() + " - " + retorno.getXMotivo());
+                    // se o erro for nenhum documento localizado, continuar o processo para os demais.
+                    if (retorno.getCStat().equals(StatusCteEnum.NENHUM_DOC_LOCALIZADO_PARA_DESTINATARIO.getCodigo())) {
+                        continue;
+                    }
+                    log.error("[ERRO AO CONSULTAR CONHECIMENTOS DE TRANSPORTE]: STATUS: {}, MOTIVO: {}", retorno.getCStat(), retorno.getXMotivo());
                 }
             }
 

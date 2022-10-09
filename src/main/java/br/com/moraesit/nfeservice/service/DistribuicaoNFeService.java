@@ -2,7 +2,6 @@ package br.com.moraesit.nfeservice.service;
 
 import br.com.moraesit.nfeservice.data.entities.Empresa;
 import br.com.moraesit.nfeservice.data.entities.NotaEntrada;
-import br.com.moraesit.nfeservice.exception.BusinessException;
 import br.com.moraesit.nfeservice.utils.ArquivoUtil;
 import br.com.swconsultoria.certificado.exception.CertificadoException;
 import br.com.swconsultoria.nfe.Nfe;
@@ -71,11 +70,15 @@ public class DistribuicaoNFeService {
                     ObjetoUtil.verifica(empresa.getNsuNfe()).orElse("000000000000000"));
 
             if (!retorno.getCStat().equals(StatusEnum.DOC_LOCALIZADO_PARA_DESTINATARIO.getCodigo())) {
+                // parar o processamento caso o erro for de consumo indevido
                 if (retorno.getCStat().equals(StatusEnum.CONSUMO_INDEVIDO.getCodigo())) {
                     break;
                 } else {
-                    throw new BusinessException("Erro ao realizar a consulta de notas: " + retorno.getCStat()
-                            + " - " + retorno.getXMotivo());
+                    // se o erro for nenhum documento localizado, continuar o processo para os demais
+                    if (retorno.getCStat().equals(StatusEnum.NENHUM_DOC_LOCALIZADO_PARA_DESTINATARIO.getCodigo())) {
+                        continue;
+                    }
+                    log.error("[ERRO AO CONSULTAR NOTAS FISCAIS]: STATUS: {}, MOTIVO: {}", retorno.getCStat(), retorno.getXMotivo());
                 }
             }
 
@@ -125,7 +128,7 @@ public class DistribuicaoNFeService {
                             .numero(nfe.getNFe().getInfNFe().getIde().getNNF())
                             .serie(nfe.getNFe().getInfNFe().getIde().getSerie())
                             // formato vindo na nfe: 2022-09-06T10:05:44-03:00
-                            //.emissao(formatarDataHora(nfe.getNFe().getInfNFe().getIde().getDhEmi()))
+                            .emissao(formatarDataHora(nfe.getNFe().getInfNFe().getIde().getDhEmi()))
                             .empresa(empresa)
                             .cnpjEmitente(nfe.getNFe().getInfNFe().getEmit().getCNPJ())
                             .nomeEmitente(nfe.getNFe().getInfNFe().getEmit().getXNome())

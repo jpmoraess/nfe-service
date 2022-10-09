@@ -35,6 +35,7 @@ public class NotaEntradaCustomRepositoryImpl implements NotaEntradaCustomReposit
 
         criteria.select(builder.construct(ResumoNotaEntrada.class,
                 root.get("id"),
+                root.get("emissao"),
                 root.get("chave"),
                 root.get("numero"),
                 root.get("serie"),
