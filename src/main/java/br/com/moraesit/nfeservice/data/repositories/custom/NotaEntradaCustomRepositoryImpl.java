@@ -10,10 +10,7 @@ import org.springframework.data.domain.Pageable;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +25,7 @@ public class NotaEntradaCustomRepositoryImpl implements NotaEntradaCustomReposit
     }
 
     @Override
-    public Page<ResumoNotaEntrada> resumir(FiltroNota filtroNota, Pageable pageable) {
+    public Page<ResumoNotaEntrada> resumir(FiltroNota filtroNota, String[] sort, Pageable pageable) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<ResumoNotaEntrada> criteria = builder.createQuery(ResumoNotaEntrada.class);
         Root<NotaEntrada> root = criteria.from(NotaEntrada.class);
@@ -47,7 +44,10 @@ public class NotaEntradaCustomRepositoryImpl implements NotaEntradaCustomReposit
         Predicate[] predicates = predicates(filtroNota, builder, root);
         criteria.where(predicates);
 
+        ordenacao(criteria, builder, root, sort);
+
         TypedQuery<ResumoNotaEntrada> query = entityManager.createQuery(criteria);
+
         paginacao(query, pageable);
 
         return new PageImpl<>(query.getResultList(), pageable, totalRegistros(filtroNota));
@@ -91,6 +91,31 @@ public class NotaEntradaCustomRepositoryImpl implements NotaEntradaCustomReposit
 
         query.setFirstResult(primeiroRegistroDaPagina);
         query.setMaxResults(totalRegistrosPorPagina);
+    }
+
+    private void ordenacao(CriteriaQuery<?> criteria, CriteriaBuilder builder, Root<NotaEntrada> root, String[] sort) {
+        List<Order> orders = new ArrayList<>();
+
+        if (sort[0].contains(",")) {
+            // sort mais de 2 colunas
+            for (String s : sort) {
+                String[] _sort = s.split(",");
+                orders.add(getOrder(_sort, builder, root));
+            }
+        } else {
+            orders.add(getOrder(sort, builder, root));
+        }
+
+        criteria.orderBy(orders);
+    }
+
+    private Order getOrder(String[] sort, CriteriaBuilder builder, Root<NotaEntrada> root) {
+        if ("desc".equals(sort[1]))
+            return builder.desc(root.get(sort[0]));
+        else if ("asc".equals(sort[1]))
+            return builder.asc(root.get(sort[0]));
+        else
+            return builder.asc(root.get(sort[0]));
     }
 
     private Long totalRegistros(FiltroNota filtroNota) {

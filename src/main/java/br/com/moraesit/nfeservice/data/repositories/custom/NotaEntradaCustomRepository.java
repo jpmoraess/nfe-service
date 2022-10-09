@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface NotaEntradaCustomRepository {
-    Page<ResumoNotaEntrada> resumir(FiltroNota filtroNota, Pageable pageable);
+    Page<ResumoNotaEntrada> resumir(FiltroNota filtroNota, String[] sort, Pageable pageable);
 }

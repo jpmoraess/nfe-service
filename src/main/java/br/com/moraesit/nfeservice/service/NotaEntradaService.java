@@ -37,8 +37,8 @@ public class NotaEntradaService {
                 .orElseThrow(() -> new EntityNotFoundException("Nota não encontrada."));
     }
 
-    public Page<ResumoNotaEntrada> resumir(final FiltroNota filtroNota, final Pageable pageable) {
-        return notaEntradaRepository.resumir(filtroNota, pageable);
+    public Page<ResumoNotaEntrada> resumir(final FiltroNota filtroNota, final String[] sort, final Pageable pageable) {
+        return notaEntradaRepository.resumir(filtroNota, sort, pageable);
     }
 
     @Transactional

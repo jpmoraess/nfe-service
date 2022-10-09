@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/nota-entrada")
@@ -39,9 +40,14 @@ public class NotaEntradaController {
     }
 
     @GetMapping
-    public Page<ResumoNotaEntrada> resumir(@RequestParam("empresaId") final Long empresaId, FiltroNota filtroNota, Pageable pageable) {
+    public Page<ResumoNotaEntrada> resumir(
+            @RequestParam("empresaId") final Long empresaId,
+            FiltroNota filtroNota,
+            Pageable pageable,
+            @RequestParam(defaultValue = "emissao, desc") final String[] sort) {
         filtroNota.setEmpresaId(empresaId);
-        return notaEntradaService.resumir(filtroNota, pageable);
+
+        return notaEntradaService.resumir(filtroNota, sort, pageable);
     }
 
     @GetMapping("/{id}")
